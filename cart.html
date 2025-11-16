@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - The Social Bite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow: #FFD93D;
+            --orange: #FF6B6B;
+            --pink: #FF8DC7;
+            --purple: #9B5DE5;
+            --blue: #00BBF9;
+            --green: #06D6A0;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+        }
+        
+        .cart-item {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+        
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .quantity-controls .btn {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Notification Styles */
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 500px;
+            animation: slideInRight 0.3s ease-out;
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .alert-success { 
+            background: #d4edda; 
+            color: #155724; 
+            border: 1px solid #c3e6cb; 
+        }
+        .alert-error { 
+            background: #f8d7da; 
+            color: #721c24; 
+            border: 1px solid #f5c6cb; 
+        }
+        .alert-info { 
+            background: #d1ecf1; 
+            color: #0c5460; 
+            border: 1px solid #bee5eb; 
+        }
+        .alert-warning { 
+            background: #fff3cd; 
+            color: #856404; 
+            border: 1px solid #ffeaa7; 
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .empty-cart i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-utensils"></i> The Social Bite
+            </a>
+            <div class="navbar-nav ms-auto">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="restaurant-detail.html">
+                            <i class="fas fa-utensils"></i> Restaurants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="orders.html">
+                            <i class="fas fa-receipt"></i> Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link"><i class="fas fa-map-marker-alt"></i> Kolkata</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart"></i> Cart 
+                            <span id="cartCount" class="badge bg-warning" style="display: none;">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Content -->
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold mb-4">
+                    <i class="fas fa-shopping-cart me-3"></i>Your Shopping Cart
+                </h1>
+            </div>
+        </div>
+
+        <!-- Login Required Message -->
+        <div id="loginRequired" class="alert alert-warning text-center" style="display: none;">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Please login to view your cart.
+            <button class="btn btn-sm btn-primary ms-2" onclick="cartManager.demoLogin()">Demo Login</button>
+        </div>
+
+        <div class="row">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <div id="cartItemsContainer">
+                    <!-- Cart items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Order Summary</h4>
+                        
+                        <div class="price-breakdown mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">₹0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Delivery Fee:</span>
+                                <span id="deliveryFee">₹40.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax (5%):</span>
+                                <span id="tax">₹0.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-4">
+                                <strong>Total:</strong>
+                                <strong id="totalAmount">₹0.00</strong>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success btn-lg" onclick="cartManager.placeOrder()" id="placeOrderBtn">
+                                <i class="fas fa-shopping-bag me-2"></i>Place Order
+                            </button>
+                            <a href="restaurant-detail.html" class="btn btn-outline-primary">
+                                <i class="fas fa-plus me-2"></i>Add More Items
+                            </a>
+                            <button class="btn btn-outline-danger" onclick="cartManager.clearCart()" id="clearCartBtn">
+                                <i class="fas fa-trash me-2"></i>Clear Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Cart Management Script -->
+    <script>
+        class CartManager {
+            constructor() {
+                this.items = [];
+                this.init();
+            }
+
+            init() {
+                this.checkLoginStatus();
+                this.loadCart();
+                this.setupEventListeners();
+            }
+
+            checkLoginStatus() {
+                const isLoggedIn = this.isUserLoggedIn();
+                if (!isLoggedIn) {
+                    document.getElementById('loginRequired').style.display = 'block';
+                    document.getElementById('cartItemsContainer').innerHTML = this.getEmptyCartHTML();
+                    this.updateButtonStates();
+                    return false;
+                }
+                document.getElementById('loginRequired').style.display = 'none';
+                return true;
+            }
+
+            isUserLoggedIn() {
+                try {
+                    const userData = localStorage.getItem('currentUser');
+                    return userData !== null;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            getCurrentUser() {
+                try {
+                    const userData = localStorage.getItem('currentUser');
+                    return userData ? JSON.parse(userData) : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            loadCart() {
+                if (!this.checkLoginStatus()) return;
+
+                try {
+                    const currentUser = this.getCurrentUser();
+                    let cart = [];
+
+                    // Try user-specific cart first
+                    if (currentUser && currentUser.id) {
+                        const userCartKey = `cart_${currentUser.id}`;
+                        cart = JSON.parse(localStorage.getItem(userCartKey)) || [];
+                    }
+
+                    // If user cart is empty, try general cart
+                    if (cart.length === 0) {
+                        cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    }
+
+                    this.items = cart;
+                    this.displayCartItems();
+                    this.updateOrderSummary();
+                    this.updateButtonStates();
+                    this.updateCartCount();
+                } catch (error) {
+                    console.error('Error loading cart:', error);
+                    this.showNotification('Error loading cart items', 'error');
+                }
+            }
+
+            displayCartItems() {
+                const container = document.getElementById('cartItemsContainer');
+                
+                if (this.items.length === 0) {
+                    container.innerHTML = this.getEmptyCartHTML();
+                    return;
+                }
+
+                let cartHTML = '';
+                
+                this.items.forEach((item, index) => {
+                    cartHTML += `
+                        <div class="card cart-item">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        ${item.image ? 
+                                            `<img src="${item.image}" alt="${item.name}" class="img-fluid rounded" style="height: 80px; object-fit: cover;">` :
+                                            `<div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 80px; width: 80px;">
+                                                <i class="fas fa-utensils text-muted fa-2x"></i>
+                                             </div>`
+                                        }
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="card-title">${item.name}</h5>
+                                        <p class="text-success fw-bold mb-2">₹${item.price} each</p>
+                                        <div class="quantity-controls d-flex align-items-center">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="cartManager.updateQuantity(${index}, ${item.quantity - 1})">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <span class="mx-3 fw-bold">${item.quantity}</span>
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="cartManager.updateQuantity(${index}, ${item.quantity + 1})">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-end">
+                                        <h5 class="text-success">₹${(item.price * item.quantity).toFixed(2)}</h5>
+                                    </div>
+                                    <div class="col-md-1 text-end">
+                                        <button class="btn btn-outline-danger btn-sm" onclick="cartManager.removeItem(${index})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = cartHTML;
+            }
+
+            getEmptyCartHTML() {
+                return `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3 class="text-muted">Your cart is empty</h3>
+                        <p class="text-muted mb-4">Looks like you haven't added any items to your cart yet.</p>
+                        <a href="restaurant-detail.html" class="btn btn-primary btn-lg">
+                            <i class="fas fa-utensils me-2"></i>Browse Restaurants
+                        </a>
+                    </div>
+                `;
+            }
+
+            updateQuantity(index, newQuantity) {
+                if (newQuantity <= 0) {
+                    this.removeItem(index);
+                    return;
+                }
+
+                if (newQuantity > 10) {
+                    this.showNotification('Maximum quantity is 10 per item', 'warning');
+                    return;
+                }
+
+                this.items[index].quantity = newQuantity;
+                this.saveCart();
+                this.displayCartItems();
+                this.updateOrderSummary();
+                this.updateCartCount();
+            }
+
+            removeItem(index) {
+                const removedItem = this.items.splice(index, 1)[0];
+                this.saveCart();
+                this.displayCartItems();
+                this.updateOrderSummary();
+                this.updateCartCount();
+                this.showNotification(`${removedItem.name} removed from cart`, 'info');
+            }
+
+            clearCart() {
+                if (this.items.length === 0) return;
+                
+                if (confirm('Are you sure you want to clear your cart?')) {
+                    this.items = [];
+                    this.saveCart();
+                    this.displayCartItems();
+                    this.updateOrderSummary();
+                    this.updateCartCount();
+                    this.showNotification('Cart cleared successfully', 'info');
+                }
+            }
+
+            saveCart() {
+                try {
+                    const currentUser = this.getCurrentUser();
+                    
+                    // Save to both user-specific and general cart for compatibility
+                    if (currentUser && currentUser.id) {
+                        const userCartKey = `cart_${currentUser.id}`;
+                        localStorage.setItem(userCartKey, JSON.stringify(this.items));
+                    }
+                    
+                    localStorage.setItem('cart', JSON.stringify(this.items));
+                } catch (error) {
+                    console.error('Error saving cart:', error);
+                    this.showNotification('Error saving cart', 'error');
+                }
+            }
+
+            updateOrderSummary() {
+                const subtotal = this.items.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+                const deliveryFee = 40.00;
+                const tax = subtotal * 0.05;
+                const total = subtotal + deliveryFee + tax;
+
+                document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+                document.getElementById('deliveryFee').textContent = `₹${deliveryFee.toFixed(2)}`;
+                document.getElementById('tax').textContent = `₹${tax.toFixed(2)}`;
+                document.getElementById('totalAmount').textContent = `₹${total.toFixed(2)}`;
+            }
+
+            updateButtonStates() {
+                const placeOrderBtn = document.getElementById('placeOrderBtn');
+                const clearCartBtn = document.getElementById('clearCartBtn');
+
+                if (placeOrderBtn) {
+                    placeOrderBtn.disabled = this.items.length === 0 || !this.isUserLoggedIn();
+                }
+
+                if (clearCartBtn) {
+                    clearCartBtn.style.display = this.items.length > 0 ? 'block' : 'none';
+                }
+            }
+
+            updateCartCount() {
+                const cartCount = document.getElementById('cartCount');
+                const totalItems = this.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+                
+                if (cartCount) {
+                    cartCount.textContent = totalItems;
+                    cartCount.style.display = totalItems > 0 ? 'inline-block' : 'none';
+                }
+            }
+
+            async placeOrder() {
+                if (!this.checkLoginStatus()) {
+                    this.showNotification('Please login to place an order', 'error');
+                    return;
+                }
+
+                if (this.items.length === 0) {
+                    this.showNotification('Your cart is empty', 'error');
+                    return;
+                }
+
+                try {
+                    this.showNotification('Processing your order...', 'info');
+
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+
+                    const currentUser = this.getCurrentUser();
+                    const orderId = 'ORD' + Date.now();
+                    
+                    const orderData = {
+                        id: orderId,
+                        userId: currentUser.id,
+                        username: currentUser.username,
+                        email: currentUser.email,
+                        items: JSON.parse(JSON.stringify(this.items)),
+                        total: this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                        subtotal: this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                        deliveryFee: 40,
+                        tax: this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 0.05,
+                        finalTotal: this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 40 + (this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 0.05),
+                        status: 'confirmed',
+                        restaurant: this.items[0]?.restaurantName || 'Multiple Restaurants',
+                        deliveryAddress: '123 Main Street, Park Street Area, Kolkata - 700016',
+                        paymentMethod: 'Cash on Delivery',
+                        orderDate: new Date().toISOString(),
+                        estimatedDelivery: new Date(Date.now() + 45 * 60000).toLocaleString('en-IN', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })
+                    };
+
+                    // Save order to both storage locations for compatibility
+                    this.saveOrderToHistory(orderData);
+                    
+                    // Clear cart after successful order
+                    this.items = [];
+                    this.saveCart();
+                    this.displayCartItems();
+                    this.updateOrderSummary();
+                    this.updateCartCount();
+                    
+                    this.showOrderSuccess(orderData);
+
+                } catch (error) {
+                    console.error('Order placement error:', error);
+                    this.showNotification('Failed to place order. Please try again.', 'error');
+                }
+            }
+
+            saveOrderToHistory(orderData) {
+                try {
+                    // Save to 'orders'
+                    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    orders.unshift(orderData);
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                    
+                    // Also save to 'orderHistory' for orders page compatibility
+                    const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+                    orderHistory.unshift(orderData);
+                    localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+                    
+                    console.log('Order saved successfully:', orderData.id);
+                    return true;
+                } catch (error) {
+                    console.error('Error saving order:', error);
+                    return false;
+                }
+            }
+
+            showOrderSuccess(orderData) {
+                const successHtml = `
+                    <div class="modal fade" id="orderSuccessModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-check-circle me-2"></i>Order Placed Successfully!
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <div class="mb-4">
+                                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                                    </div>
+                                    <h4 class="text-success mb-3">Thank You for Your Order!</h4>
+                                    <div class="order-details text-start">
+                                        <p><strong>Order ID:</strong> ${orderData.id}</p>
+                                        <p><strong>Customer:</strong> ${orderData.username}</p>
+                                        <p><strong>Restaurant:</strong> ${orderData.restaurant}</p>
+                                        <p><strong>Total Amount:</strong> ₹${orderData.finalTotal.toFixed(2)}</p>
+                                        <p><strong>Estimated Delivery:</strong> ${orderData.estimatedDelivery}</p>
+                                    </div>
+                                    <div class="alert alert-info mt-3">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        You will receive an order confirmation shortly.
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="fas fa-home me-1"></i>Continue Shopping
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="window.location.href='orders.html'">
+                                        <i class="fas fa-receipt me-1"></i>View Orders
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const existingModal = document.getElementById('orderSuccessModal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+
+                document.body.insertAdjacentHTML('beforeend', successHtml);
+                const modal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));
+                modal.show();
+
+                modal._element.addEventListener('hidden.bs.modal', function () {
+                    this.remove();
+                });
+            }
+
+            showNotification(message, type = 'info') {
+                const existingAlert = document.querySelector('.custom-alert');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `custom-alert alert-${type}`;
+                alertDiv.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                `;
+
+                document.body.appendChild(alertDiv);
+
+                setTimeout(() => {
+                    if (alertDiv.parentElement) {
+                        alertDiv.remove();
+                    }
+                }, 3000);
+            }
+
+            setupEventListeners() {
+                // Listen for storage changes (if cart is updated from other tabs)
+                window.addEventListener('storage', () => {
+                    this.loadCart();
+                });
+            }
+
+            demoLogin() {
+                const email = 'customer1@example.com';
+                const password = 'customer123';
+                
+                const user = {
+                    id: 2,
+                    username: 'customer1',
+                    email: email,
+                    role: 'customer'
+                };
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                location.reload();
+            }
+        }
+
+        // Initialize cart manager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            window.cartManager = new CartManager();
+        });
+    </script>
+</body>
+</html>
