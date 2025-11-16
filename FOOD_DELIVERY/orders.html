@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - The Social Bite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow: #FFD93D;
+            --orange: #FF6B6B;
+            --pink: #FF8DC7;
+            --purple: #9B5DE5;
+            --blue: #00BBF9;
+            --green: #06D6A0;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--light-bg);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: 800;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            color: white;
+            padding: 2.5rem 0;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .order-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .status-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        
+        .status-confirmed { background: var(--blue); color: white; }
+        .status-preparing { background: var(--yellow); color: #333; }
+        .status-out_for_delivery { background: var(--orange); color: white; }
+        .status-delivered { background: var(--green); color: white; }
+        .status-cancelled { background: #6c757d; color: white; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            color: #dee2e6;
+            opacity: 0.7;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--purple);
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .stats-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .order-items img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .filter-tabs {
+            background: white;
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .filter-btn {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #6c757d;
+            cursor: pointer;
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--purple);
+            color: white;
+        }
+        
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 1.5rem 0;
+        }
+        
+        .progress-tracker::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #e9ecef;
+            z-index: 1;
+        }
+        
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .step-active .step-icon {
+            background: var(--purple);
+            color: white;
+        }
+        
+        .step-completed .step-icon {
+            background: var(--green);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .step-active .step-label, .step-completed .step-label {
+            color: var(--purple);
+        }
+        
+        .custom-alert {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 500px;
+            animation: slideIn 0.5s ease-out;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            border: none;
+            border-radius: 25px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 93, 229, 0.4);
+        }
+        
+        .order-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .order-actions .btn {
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Fix for mobile responsiveness */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 2rem 0;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+            
+            .order-actions {
+                flex-direction: column;
+            }
+            
+            .order-actions .btn {
+                width: 100%;
+            }
+            
+            .filter-tabs .d-flex {
+                justify-content: center;
+            }
+            
+            .progress-tracker {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .progress-step {
+                flex: 1;
+                min-width: 80px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header .display-5 {
+                font-size: 2rem;
+            }
+            
+            .stats-number {
+                font-size: 1.8rem;
+            }
+            
+            .order-card .row {
+                flex-direction: column;
+            }
+            
+            .order-actions {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Fix for order items display */
+        .order-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 12px;
+        }
+
+        .order-item-details {
+            flex: 1;
+        }
+
+        .order-item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .order-item-price {
+            color: var(--purple);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-utensils me-2"></i>The Social Bite
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="restaurant-detail.html">
+                            <i class="fas fa-store me-1"></i> Restaurants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i> Cart
+                            <span id="cartCount" class="badge bg-warning rounded-pill ms-1" style="display: none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="orders.html">
+                            <i class="fas fa-receipt me-1"></i> Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="auth.showLoginModal(); return false;">
+                            <i class="fas fa-user me-1"></i> Profile
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="fas fa-receipt me-3"></i>My Orders
+                    </h1>
+                    <p class="lead mb-0">Track your food delivery orders and manage your purchases</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button class="btn btn-light me-2" onclick="ordersPage.refreshOrders()">
+                        <i class="fas fa-sync-alt me-1"></i> Refresh
+                    </button>
+                    <button class="btn btn-outline-light" onclick="ordersPage.exportOrders()">
+                        <i class="fas fa-download me-1"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Check Login Status -->
+        <div id="loginRequired" class="alert alert-warning text-center" style="display: none;">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Please login to view your orders.
+            <a href="index.html" class="btn btn-sm btn-primary ms-2">Login</a>
+        </div>
+
+        <!-- Order Statistics -->
+        <div class="row mb-4" id="orderStats">
+            <!-- Stats will be loaded here -->
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" id="filterTabs" style="display: none;">
+            <div class="d-flex flex-wrap gap-2">
+                <button class="filter-btn active" data-filter="all">All Orders</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="preparing">Preparing</button>
+                <button class="filter-btn" data-filter="out_for_delivery">On the Way</button>
+                <button class="filter-btn" data-filter="delivered">Delivered</button>
+                <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+            </div>
+        </div>
+
+        <!-- Orders List -->
+        <div id="ordersList">
+            <!-- Orders will be loaded here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" style="display: none;">
+            <div class="empty-state">
+                <i class="fas fa-shopping-bag"></i>
+                <h3>No Orders Yet</h3>
+                <p class="text-muted mb-4">You haven't placed any orders yet. Start exploring our delicious restaurants!</p>
+                <a href="restaurant-detail.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-utensils me-2"></i>Browse Restaurants
+                </a>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-5">
+            <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Loading your orders...</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Orders Page Script -->
+    <script>
+        // Simple Authentication Helper
+        const auth = {
+            isLoggedIn: function() {
+                try {
+                    const userData = localStorage.getItem('currentUser');
+                    return userData !== null;
+                } catch (error) {
+                    return false;
+                }
+            },
+            
+            getCurrentUser: function() {
+                try {
+                    const userData = localStorage.getItem('currentUser');
+                    return userData ? JSON.parse(userData) : null;
+                } catch (error) {
+                    return null;
+                }
+            },
+            
+            showLoginModal: function() {
+                const email = prompt('Enter your email:');
+                if (!email) return;
+                
+                const password = prompt('Enter your password:');
+                if (!password) return;
+                
+                // Simple demo login
+                if ((email === 'admin@thesocialbite.com' && password === 'admin123') || 
+                    (email === 'customer1@example.com' && password === 'customer123')) {
+                    const user = {
+                        id: email === 'admin@thesocialbite.com' ? 1 : 2,
+                        username: email.split('@')[0],
+                        email: email,
+                        role: email === 'admin@thesocialbite.com' ? 'admin' : 'customer'
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    location.reload();
+                } else {
+                    alert('Invalid credentials. Try: admin@thesocialbite.com / admin123 or customer1@example.com / customer123');
+                }
+            },
+            
+            showNotification: function(message, type = 'info') {
+                const existingAlert = document.querySelector('.custom-alert');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `custom-alert alert-${type}`;
+                
+                const icon = type === 'success' ? 'check-circle' : 
+                            type === 'error' ? 'exclamation-circle' : 
+                            type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+                
+                alertDiv.innerHTML = `
+                    <i class="fas fa-${icon} me-2"></i>
+                    <span class="flex-grow-1">${message}</span>
+                    <button type="button" class="btn-close ms-2" onclick="this.parentElement.remove()" style="border: none; background: none; font-size: 1.2rem; cursor: pointer;">×</button>
+                `;
+
+                document.body.appendChild(alertDiv);
+
+                setTimeout(() => {
+                    if (alertDiv.parentElement) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
+        };
+
+        class OrdersPage {
+            constructor() {
+                this.orders = [];
+                this.filteredOrders = [];
+                this.currentFilter = 'all';
+                this.init();
+            }
+
+            init() {
+                // Check if user is logged in
+                if (!auth.isLoggedIn()) {
+                    document.getElementById('loginRequired').style.display = 'block';
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('filterTabs').style.display = 'none';
+                    return;
+                }
+
+                this.setupEventListeners();
+                this.loadOrders();
+                this.updateCartCount();
+            }
+
+            setupEventListeners() {
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentFilter = e.target.dataset.filter;
+                        this.filterOrders();
+                    });
+                });
+            }
+
+            loadOrders() {
+                // Show loading state
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('ordersList').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('filterTabs').style.display = 'block';
+
+                // Simulate API call delay
+                setTimeout(() => {
+                    try {
+                        const currentUser = auth.getCurrentUser();
+                        
+                        if (!currentUser) {
+                            this.showNotification('Please login to view your orders', 'error');
+                            document.getElementById('loadingState').style.display = 'none';
+                            document.getElementById('emptyState').style.display = 'block';
+                            return;
+                        }
+
+                        // Try to get orders from localStorage
+                        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                        const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+                        
+                        // Combine both order sources and filter by current user
+                        const userOrders = [...orders, ...orderHistory].filter(order => 
+                            order.userId === currentUser.id || order.userId === currentUser.userId
+                        );
+                        
+                        // Sort by date (newest first)
+                        this.orders = userOrders.sort((a, b) => 
+                            new Date(b.orderDate || b.date || b.createdAt) - new Date(a.orderDate || a.date || a.createdAt)
+                        );
+
+                        this.filteredOrders = [...this.orders];
+                        this.displayOrderStats();
+                        this.filterOrders();
+                        
+                        // Hide loading state
+                        document.getElementById('loadingState').style.display = 'none';
+                    } catch (error) {
+                        console.error('Error loading orders:', error);
+                        this.showNotification('Failed to load orders. Please try again.', 'error');
+                        document.getElementById('loadingState').style.display = 'none';
+                        document.getElementById('emptyState').style.display = 'block';
+                    }
+                }, 1000);
+            }
+
+            displayOrderStats() {
+                const stats = this.calculateStats();
+                const statsHtml = `
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-number text-primary">${stats.totalOrders}</div>
+                            <div class="text-muted">Total Orders</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-number text-success">₹${stats.totalSpent}</div>
+                            <div class="text-muted">Total Spent</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-number text-info">${stats.deliveredOrders}</div>
+                            <div class="text-muted">Delivered</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-number text-warning">${stats.pendingOrders}</div>
+                            <div class="text-muted">Pending</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('orderStats').innerHTML = statsHtml;
+            }
+
+            calculateStats() {
+                return {
+                    totalOrders: this.orders.length,
+                    totalSpent: this.orders.reduce((sum, order) => sum + (order.finalTotal || order.total || order.amount || 0), 0).toFixed(2),
+                    deliveredOrders: this.orders.filter(order => order.status === 'delivered' || order.status === 'completed').length,
+                    pendingOrders: this.orders.filter(order => 
+                        order.status === 'confirmed' || order.status === 'preparing' || order.status === 'pending' || order.status === 'out_for_delivery'
+                    ).length
+                };
+            }
+
+            filterOrders() {
+                if (this.currentFilter === 'all') {
+                    this.filteredOrders = [...this.orders];
+                } else if (this.currentFilter === 'pending') {
+                    this.filteredOrders = this.orders.filter(order => 
+                        order.status === 'confirmed' || order.status === 'preparing' || order.status === 'pending' || order.status === 'out_for_delivery'
+                    );
+                } else {
+                    this.filteredOrders = this.orders.filter(order => order.status === this.currentFilter);
+                }
+                
+                this.displayOrders();
+            }
+
+            displayOrders() {
+                const ordersList = document.getElementById('ordersList');
+                const emptyState = document.getElementById('emptyState');
+
+                if (this.filteredOrders.length === 0) {
+                    ordersList.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+                ordersList.style.display = 'block';
+
+                const ordersHtml = this.filteredOrders.map(order => {
+                    const orderId = order.id || order.orderId || `TSB${Date.now()}`;
+                    const orderItems = Array.isArray(order.items) ? order.items : [];
+                    
+                    return `
+                    <div class="order-card card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <h5 class="mb-0 me-3">Order #${orderId}</h5>
+                                        <span class="status-badge status-${order.status}">
+                                            ${this.formatStatus(order.status)}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            ${new Date(order.orderDate || order.date || order.createdAt || new Date()).toLocaleDateString('en-IN', {
+                                                weekday: 'long',
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </small>
+                                    </div>
+
+                                    <div class="order-items mb-3">
+                                        <h6 class="small text-muted mb-2">ITEMS:</h6>
+                                        ${orderItems.map(item => `
+                                            <div class="d-flex justify-content-between align-items-center small mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    ${item.image ? `
+                                                        <img src="${item.image}" alt="${item.name}" 
+                                                             class="img-thumbnail me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    ` : `
+                                                        <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" 
+                                                             style="width: 50px; height: 50px;">
+                                                            <i class="fas fa-utensils text-muted"></i>
+                                                        </div>
+                                                    `}
+                                                    <span>${item.name || 'Unknown Item'} × ${item.quantity || 1}</span>
+                                                </div>
+                                                <span>₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+
+                                    ${order.deliveryAddress ? `
+                                        <div class="mb-3">
+                                            <small class="text-muted">
+                                                <i class="fas fa-map-marker-alt me-1"></i>
+                                                ${order.deliveryAddress}
+                                            </small>
+                                        </div>
+                                    ` : ''}
+
+                                    ${this.getOrderProgress(order)}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3 text-md-end">
+                                        <h4 class="text-success">₹${(order.finalTotal || order.total || order.amount || 0).toFixed(2)}</h4>
+                                        <small class="text-muted">Total Amount</small>
+                                    </div>
+                                    
+                                    ${order.estimatedDelivery ? `
+                                        <div class="mb-3 text-md-end">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Est. Delivery: ${order.estimatedDelivery}
+                                            </small>
+                                        </div>
+                                    ` : ''}
+
+                                    <div class="order-actions justify-content-md-end">
+                                        ${(order.status === 'confirmed' || order.status === 'preparing' || order.status === 'pending') ? `
+                                            <button class="btn btn-outline-danger btn-sm" onclick="ordersPage.cancelOrder('${orderId}')">
+                                                <i class="fas fa-times me-1"></i>Cancel
+                                            </button>
+                                        ` : ''}
+                                        
+                                        <button class="btn btn-outline-primary btn-sm" onclick="ordersPage.trackOrder('${orderId}')">
+                                            <i class="fas fa-map-marker-alt me-1"></i>Track
+                                        </button>
+                                        
+                                        ${(order.status === 'delivered' || order.status === 'completed') ? `
+                                            <button class="btn btn-outline-success btn-sm" onclick="ordersPage.reorder('${orderId}')">
+                                                <i class="fas fa-redo me-1"></i>Reorder
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                ordersList.innerHTML = ordersHtml;
+            }
+
+            getOrderProgress(order) {
+                const steps = [
+                    { status: 'confirmed', label: 'Confirmed', icon: 'fa-check' },
+                    { status: 'preparing', label: 'Preparing', icon: 'fa-utensils' },
+                    { status: 'out_for_delivery', label: 'On the Way', icon: 'fa-motorcycle' },
+                    { status: 'delivered', label: 'Delivered', icon: 'fa-home' }
+                ];
+                
+                const statusIndex = steps.findIndex(step => step.status === order.status);
+                
+                // If order is cancelled or completed, don't show progress
+                if (order.status === 'cancelled' || order.status === 'completed') {
+                    return '';
+                }
+                
+                let progressHtml = `<div class="progress-tracker">`;
+                
+                steps.forEach((step, index) => {
+                    let stepClass = '';
+                    if (index < statusIndex) {
+                        stepClass = 'step-completed';
+                    } else if (index === statusIndex) {
+                        stepClass = 'step-active pulse';
+                    }
+                    
+                    progressHtml += `
+                        <div class="progress-step ${stepClass}">
+                            <div class="step-icon">
+                                <i class="fas ${step.icon}"></i>
+                            </div>
+                            <div class="step-label">${step.label}</div>
+                        </div>
+                    `;
+                });
+                
+                progressHtml += `</div>`;
+                
+                return progressHtml;
+            }
+
+            formatStatus(status) {
+                const statusMap = {
+                    'confirmed': 'Confirmed',
+                    'preparing': 'Preparing',
+                    'out_for_delivery': 'On the Way',
+                    'delivered': 'Delivered',
+                    'cancelled': 'Cancelled',
+                    'pending': 'Pending',
+                    'completed': 'Completed'
+                };
+                return statusMap[status] || status;
+            }
+
+            cancelOrder(orderId) {
+                if (confirm('Are you sure you want to cancel this order?')) {
+                    // Update order status in localStorage
+                    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    const orderIndex = orders.findIndex(order => order.id === orderId);
+                    
+                    if (orderIndex !== -1) {
+                        orders[orderIndex].status = 'cancelled';
+                        orders[orderIndex].cancelledAt = new Date().toISOString();
+                        localStorage.setItem('orders', JSON.stringify(orders));
+                    }
+                    
+                    // Also update in orderHistory
+                    const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+                    const historyIndex = orderHistory.findIndex(order => order.id === orderId);
+                    
+                    if (historyIndex !== -1) {
+                        orderHistory[historyIndex].status = 'cancelled';
+                        orderHistory[historyIndex].cancelledAt = new Date().toISOString();
+                        localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+                    }
+                    
+                    this.showNotification('Order cancelled successfully', 'success');
+                    this.loadOrders(); // Reload the orders
+                }
+            }
+
+            trackOrder(orderId) {
+                const order = this.orders.find(o => o.id === orderId || o.orderId === orderId);
+                if (order) {
+                    this.showNotification(`Tracking order #${orderId}. Estimated delivery: ${order.estimatedDelivery || '30-40 minutes'}`, 'info');
+                } else {
+                    this.showNotification(`Tracking order #${orderId}. This would show real-time delivery tracking.`, 'info');
+                }
+            }
+
+            reorder(orderId) {
+                const order = this.orders.find(o => o.id === orderId || o.orderId === orderId);
+                if (order && order.items) {
+                    // Get current user to use user-specific cart
+                    const currentUser = auth.getCurrentUser();
+                    const userCartKey = currentUser ? `cart_${currentUser.id}` : 'cart';
+                    
+                    let cart = JSON.parse(localStorage.getItem(userCartKey)) || [];
+                    
+                    // Clear existing cart items from different restaurants
+                    if (cart.length > 0) {
+                        const currentRestaurant = cart[0].restaurantId;
+                        const newRestaurant = order.items[0]?.restaurantId;
+                        
+                        if (currentRestaurant !== newRestaurant) {
+                            if (!confirm('Your cart contains items from another restaurant. Would you like to clear the cart and add these items?')) {
+                                return;
+                            }
+                            cart = [];
+                        }
+                    }
+                    
+                    // Add all items from the order to cart
+                    order.items.forEach(item => {
+                        const existingItem = cart.find(cartItem => 
+                            cartItem.id === item.id && cartItem.restaurantId === item.restaurantId
+                        );
+                        
+                        if (existingItem) {
+                            existingItem.quantity = (existingItem.quantity || 1) + (item.quantity || 1);
+                        } else {
+                            cart.push({
+                                ...item,
+                                quantity: item.quantity || 1
+                            });
+                        }
+                    });
+                    
+                    // Save to both user-specific and general cart
+                    localStorage.setItem(userCartKey, JSON.stringify(cart));
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    
+                    this.updateCartCount();
+                    this.showNotification('Items added to cart!', 'success');
+                    
+                    // Redirect to cart page after a short delay
+                    setTimeout(() => {
+                        window.location.href = 'cart.html';
+                    }, 1500);
+                } else {
+                    this.showNotification('Could not reorder. Order items not found.', 'error');
+                }
+            }
+
+            refreshOrders() {
+                this.loadOrders();
+                this.showNotification('Orders refreshed', 'info');
+            }
+
+            exportOrders() {
+                if (this.orders.length === 0) {
+                    this.showNotification('No orders to export', 'info');
+                    return;
+                }
+
+                const data = JSON.stringify(this.orders, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `social-bite-orders-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showNotification('Orders exported successfully!', 'success');
+            }
+
+            updateCartCount() {
+                const cartCount = document.getElementById('cartCount');
+                try {
+                    const currentUser = auth.getCurrentUser();
+                    const userCartKey = currentUser ? `cart_${currentUser.id}` : 'cart';
+                    
+                    let cart = JSON.parse(localStorage.getItem(userCartKey)) || [];
+                    
+                    // If user cart is empty, check general cart
+                    if (cart.length === 0) {
+                        cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    }
+                    
+                    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+                    
+                    if (cartCount) {
+                        cartCount.textContent = totalItems;
+                        cartCount.style.display = totalItems > 0 ? 'inline-block' : 'none';
+                    }
+                } catch (e) {
+                    console.error('Error updating cart count:', e);
+                    if (cartCount) {
+                        cartCount.style.display = 'none';
+                    }
+                }
+            }
+
+            showNotification(message, type = 'info') {
+                auth.showNotification(message, type);
+            }
+        }
+
+        // Initialize orders page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            window.ordersPage = new OrdersPage();
+            window.auth = auth;
+        });
+    </script>
+</body>
+</html>

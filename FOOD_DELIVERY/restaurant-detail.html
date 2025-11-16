@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Restaurant Detail - The Social Bite</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    :root {
+      --yellow: #FFD93D;
+      --orange: #FF6B6B;
+      --pink: #FF8DC7;
+      --purple: #9B5DE5;
+      --blue: #00BBF9;
+      --green: #06D6A0;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+    }
+    
+    .navbar-brand {
+      color: var(--purple) !important;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    
+    .nav-link {
+      color: #333 !important;
+      font-weight: 500;
+    }
+    
+    .nav-link.active {
+      color: var(--purple) !important;
+      font-weight: 600;
+    }
+    
+    .restaurant-header {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: white;
+      padding: 2rem 0;
+      border-radius: 0 0 20px 20px;
+      margin-bottom: 2rem;
+    }
+    
+    .menu-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    
+    .menu-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .menu-image {
+      height: 200px;
+      object-fit: cover;
+      width: 100%;
+    }
+    
+    .menu-price {
+      color: var(--green);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    
+    .add-to-cart-btn {
+      background: var(--green);
+      border: none;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .add-to-cart-btn:hover {
+      background: #05b389;
+      transform: scale(1.05);
+    }
+    
+    .rating-badge {
+      background: var(--green);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    
+    .review-card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+    }
+    
+    .star-rating {
+      color: #FFD93D;
+    }
+    
+    .category-section {
+      margin-bottom: 3rem;
+    }
+    
+    .category-title {
+      color: var(--purple);
+      border-bottom: 3px solid var(--yellow);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+    
+    /* Notification styles */
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .custom-alert {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      min-width: 300px;
+      max-width: 500px;
+      animation: slideInRight 0.3s ease-out;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .custom-alert.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .custom-alert.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .custom-alert.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .restaurant-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    
+    .restaurant-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .btn-disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a href="index.html" class="navbar-brand fw-bold">
+        <i class="fas fa-utensils"></i> The Social Bite
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="restaurant-detail.html">Restaurants</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="cart.html">Cart</a>
+          </li>
+          <li class="nav-item">
+            <span class="nav-link"><i class="fas fa-map-marker-alt text-primary"></i> Kolkata</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="cart.html">
+              <i class="fas fa-shopping-cart"></i> Cart 
+              <span id="cartCount" class="badge bg-primary" style="display: none;">0</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="restaurant-header">
+    <div class="container">
+      <div id="restaurant">
+        <!-- Dynamic content will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Menu Section -->
+    <h2 class="mb-4"><i class="fas fa-utensils text-warning"></i> Menu</h2>
+    <div id="menu" class="row">
+      <!-- Dynamic menu items will be loaded here -->
+    </div>
+
+    <!-- Reviews Section -->
+    <h2 class="mb-4 mt-5"><i class="fas fa-comments text-info"></i> Customer Reviews</h2>
+    <div id="reviews" class="mb-5">
+      <!-- Dynamic reviews will be loaded here -->
+    </div>
+
+    <!-- Review Form -->
+    <div class="card shadow p-4 mb-5">
+      <h4 class="mb-3"><i class="fas fa-edit text-primary"></i> Add Your Review</h4>
+      <form id="reviewForm">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="rating" class="form-label">Rating (1-5)</label>
+            <input type="number" id="rating" min="1" max="5" class="form-control" required />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="comment" class="form-label">Your Review</label>
+          <textarea id="comment" class="form-control" rows="3" placeholder="Share your experience..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-paper-plane me-2"></i> Submit Review
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Enhanced cart functionality that integrates with your auth system
+    const cartManager = {
+      // Check if user is logged in
+      isUserLoggedIn: function() {
+        try {
+          const userData = localStorage.getItem('currentUser');
+          return userData !== null;
+        } catch (error) {
+          console.error('Error checking login status:', error);
+          return false;
+        }
+      },
+
+      // Get current user
+      getCurrentUser: function() {
+        try {
+          const userData = localStorage.getItem('currentUser');
+          return userData ? JSON.parse(userData) : null;
+        } catch (error) {
+          console.error('Error getting user data:', error);
+          return null;
+        }
+      },
+
+      // Add item to cart with proper user validation
+      addToCart: function(item) {
+        if (!this.isUserLoggedIn()) {
+          this.showNotification('Please login to add items to cart', 'error');
+          setTimeout(() => {
+            // Redirect to login page
+            window.location.href = 'index.html';
+          }, 2000);
+          return false;
+        }
+
+        try {
+          const currentUser = this.getCurrentUser();
+          if (!currentUser) {
+            this.showNotification('Please login to add items to cart', 'error');
+            return false;
+          }
+
+          // Use user-specific cart storage
+          const userCartKey = `cart_${currentUser.id}`;
+          let cart = JSON.parse(localStorage.getItem(userCartKey)) || [];
+          
+          // Also check general cart for backward compatibility
+          if (cart.length === 0) {
+            cart = JSON.parse(localStorage.getItem('cart')) || [];
+          }
+
+          // Check if we can add item from this restaurant
+          if (cart.length > 0) {
+            const currentRestaurant = cart[0].restaurantId;
+            if (currentRestaurant !== item.restaurantId) {
+              if (!confirm('Your cart contains items from another restaurant. Would you like to clear the cart and add this item?')) {
+                return false;
+              }
+              cart = []; // Clear cart
+            }
+          }
+
+          // Find existing item
+          const existingItem = cart.find(cartItem => 
+            cartItem.name === item.name && cartItem.restaurantId === item.restaurantId
+          );
+          
+          if (existingItem) {
+            existingItem.quantity = (existingItem.quantity || 1) + 1;
+            if (existingItem.quantity > 10) {
+              existingItem.quantity = 10;
+              this.showNotification('Maximum quantity reached for this item', 'warning');
+            }
+          } else {
+            cart.push({
+              id: item.id || `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              name: item.name,
+              price: parseFloat(item.price),
+              image: item.image,
+              quantity: 1,
+              restaurantId: item.restaurantId,
+              restaurantName: item.restaurantName,
+              addedAt: new Date().toISOString(),
+              category: item.category,
+              customizations: item.customizations || []
+            });
+          }
+          
+          // Save to both user-specific and general cart for compatibility
+          localStorage.setItem(userCartKey, JSON.stringify(cart));
+          localStorage.setItem('cart', JSON.stringify(cart));
+          
+          this.updateCartCount();
+          return true;
+        } catch (error) {
+          console.error('Error adding item to cart:', error);
+          return false;
+        }
+      },
+
+      // Update cart count in navbar
+      updateCartCount: function() {
+        const cartCount = document.getElementById('cartCount');
+        if (!cartCount) return;
+
+        try {
+          const currentUser = this.getCurrentUser();
+          let totalItems = 0;
+
+          if (currentUser) {
+            // Try user-specific cart first
+            const userCartKey = `cart_${currentUser.id}`;
+            const userCart = JSON.parse(localStorage.getItem(userCartKey)) || [];
+            totalItems = userCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            
+            // If user cart is empty, check general cart
+            if (totalItems === 0) {
+              const generalCart = JSON.parse(localStorage.getItem('cart')) || [];
+              totalItems = generalCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            }
+          } else {
+            const generalCart = JSON.parse(localStorage.getItem('cart')) || [];
+            totalItems = generalCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+          }
+
+          cartCount.textContent = totalItems;
+          cartCount.style.display = totalItems > 0 ? 'inline-block' : 'none';
+        } catch (error) {
+          console.error('Error updating cart count:', error);
+          cartCount.style.display = 'none';
+        }
+      },
+
+      // Show notification
+      showNotification: function(message, type = 'info') {
+        // Remove existing notifications
+        const existingAlert = document.querySelector('.custom-alert');
+        if (existingAlert) {
+          existingAlert.remove();
+        }
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `custom-alert ${type}`;
+        
+        const icon = type === 'success' ? 'check-circle' : 
+                    type === 'error' ? 'exclamation-circle' : 
+                    type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+        
+        alertDiv.innerHTML = `
+          <i class="fas fa-${icon} me-2"></i>
+          ${message}
+        `;
+
+        document.body.appendChild(alertDiv);
+
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+          if (alertDiv.parentElement) {
+            alertDiv.remove();
+          }
+        }, 3000);
+      },
+
+      // Initialize cart system
+      init: function() {
+        this.updateCartCount();
+        
+        // Listen for storage changes (if cart is updated from other tabs)
+        window.addEventListener('storage', () => {
+          this.updateCartCount();
+        });
+      }
+    };
+
+    // Load restaurant details when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      cartManager.init();
+      loadRestaurantDetails();
+    });
+
+    async function loadRestaurantDetails() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const restaurantId = urlParams.get('id');
+
+      // If no specific restaurant ID, show all restaurants
+      if (!restaurantId) {
+        displayAllRestaurants();
+        return;
+      }
+
+      try {
+        // Sample restaurant data for different IDs - MATCHING THE INDEX PAGE IDs
+        const restaurants = {
+          'spice-symphony': {
+            id: 'spice-symphony',
+            name: "Spice Symphony",
+            cuisine: "Fusion",
+            location: "Downtown, Kolkata",
+            rating: 4.5,
+            description: "Creative fusion dishes in a vibrant atmosphere with global flavors",
+            delivery_time: "35-45 mins",
+            cost_for_two: "₹1200-1800",
+            offers: "20% off on fusion thali",
+            image_url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+          },
+          'urban-grill': {
+            id: 'urban-grill',
+            name: "Urban Grill",
+            cuisine: "Barbecue",
+            location: "Central District, Kolkata",
+            rating: 4.4,
+            description: "Smoky grilled specialties and live music",
+            delivery_time: "30-40 mins",
+            cost_for_two: "₹1500-2000",
+            offers: "Free dessert with orders above ₹1000",
+            image_url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+          },
+          'biryani-bliss': {
+            id: 'biryani-bliss',
+            name: "Biryani Bliss",
+            cuisine: "Mughlai",
+            location: "Park Circus, Kolkata",
+            rating: 4.6,
+            description: "Authentic biryani with royal flavors",
+            delivery_time: "25-35 mins",
+            cost_for_two: "₹800-1200",
+            offers: "10% off on all biryanis",
+            image_url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+          },
+          'continental-delights': {
+            id: 'continental-delights',
+            name: "Continental Delights",
+            cuisine: "Continental",
+            location: "Park Street, Kolkata",
+            rating: 4.3,
+            description: "Classic European cuisine with modern twist",
+            delivery_time: "40-50 mins",
+            cost_for_two: "₹1800-2500",
+            offers: "Buy 1 get 1 free on pasta",
+            image_url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+          }
+        };
+
+        const sampleMenu = {
+          'spice-symphony': [
+            { 
+              id: 1, 
+              restaurant_id: 'spice-symphony', 
+              name: "Fusion Platter", 
+              description: "Assorted fusion appetizers from around the world", 
+              price: 450, 
+              category: "Starters", 
+              image_url: "https://images.unsplash.com/photo-1559715745-e1b33a271c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            },
+            { 
+              id: 2, 
+              restaurant_id: 'spice-symphony', 
+              name: "Thai Curry Pizza", 
+              description: "Unique pizza with Thai green curry toppings", 
+              price: 550, 
+              category: "Main Course", 
+              image_url: "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            },
+            { 
+              id: 3, 
+              restaurant_id: 'spice-symphony', 
+              name: "Sushi Tacos", 
+              description: "Creative fusion of Japanese and Mexican cuisine", 
+              price: 600, 
+              category: "Main Course", 
+              image_url: "https://images.unsplash.com/photo-1553621042-f6e147245754?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            }
+          ],
+          'urban-grill': [
+            { 
+              id: 4, 
+              restaurant_id: 'urban-grill', 
+              name: "BBQ Platter", 
+              description: "Mixed grill with chicken, lamb and vegetables", 
+              price: 750, 
+              category: "Main Course", 
+              image_url: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            },
+            { 
+              id: 5, 
+              restaurant_id: 'urban-grill', 
+              name: "Smoked Ribs", 
+              description: "Tender pork ribs smoked for 8 hours", 
+              price: 680, 
+              category: "Main Course", 
+              image_url: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            }
+          ],
+          'biryani-bliss': [
+            { 
+              id: 6, 
+              restaurant_id: 'biryani-bliss', 
+              name: "Hyderabadi Biryani", 
+              description: "Authentic Hyderabadi dum biryani with spices", 
+              price: 420, 
+              category: "Main Course", 
+              image_url: "https://images.unsplash.com/photo-1563379091339-03246963d96c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            },
+            { 
+              id: 7, 
+              restaurant_id: 'biryani-bliss', 
+              name: "Lucknowi Biryani", 
+              description: "Awadhi style biryani with delicate flavors", 
+              price: 450, 
+              category: "Main Course", 
+              image_url: "https://images.unsplash.com/photo-1563379091339-03246963d96c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            }
+          ],
+          'continental-delights': [
+            { 
+              id: 8, 
+              restaurant_id: 'continental-delights', 
+              name: "Truffle Pasta", 
+              description: "Creamy pasta with black truffle and mushrooms", 
+              price: 650, 
+              category: "Main Course", 
+              image_url: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            },
+            { 
+              id: 9, 
+              restaurant_id: 'continental-delights', 
+              name: "Beef Wellington", 
+              description: "Classic British dish with tender beef", 
+              price: 1200, 
+              category: "Main Course", 
+              image_url: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+            }
+          ]
+        };
+
+        const sampleReviews = {
+          'spice-symphony': [
+            { id: 1, username: "Priya S.", rating: 5, comment: "Amazing fusion food! The flavors were incredible.", date: "2024-01-15" },
+            { id: 2, username: "Rahul M.", rating: 4, comment: "Great ambiance and creative dishes. Will visit again!", date: "2024-01-10" }
+          ],
+          'urban-grill': [
+            { id: 3, username: "Amit K.", rating: 5, comment: "Best BBQ in town! The ribs were perfectly smoked.", date: "2024-01-14" }
+          ],
+          'biryani-bliss': [
+            { id: 4, username: "Sneha R.", rating: 5, comment: "Authentic biryani that reminds me of Hyderabad!", date: "2024-01-12" }
+          ],
+          'continental-delights': [
+            { id: 5, username: "David L.", rating: 4, comment: "Excellent continental food with perfect presentation.", date: "2024-01-08" }
+          ]
+        };
+
+        const restaurant = restaurants[restaurantId];
+        const menu = sampleMenu[restaurantId] || [];
+        const reviews = sampleReviews[restaurantId] || [];
+
+        if (!restaurant) {
+          document.getElementById('restaurant').innerHTML = '<div class="alert alert-danger">Restaurant not found</div>';
+          return;
+        }
+
+        const data = {
+          restaurant: restaurant,
+          menu: menu,
+          reviews: reviews
+        };
+
+        displayRestaurantDetails(data);
+        displayMenuItems(data.menu, restaurant);
+        displayReviews(data.reviews);
+      } catch (error) {
+        console.error('Error loading restaurant details:', error);
+        document.getElementById('restaurant').innerHTML = `
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Error loading restaurant details. Please try again later.
+          </div>
+        `;
+      }
+    }
+
+    function displayAllRestaurants() {
+      const restaurants = [
+        {
+          id: 'spice-symphony',
+          name: "Spice Symphony",
+          cuisine: "Fusion",
+          location: "Downtown, Kolkata",
+          rating: 4.5,
+          description: "Creative fusion dishes in a vibrant atmosphere with global flavors",
+          delivery_time: "35-45 mins",
+          cost_for_two: "₹1200-1800",
+          offers: "20% off on fusion thali",
+          image_url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+        },
+        {
+          id: 'urban-grill',
+          name: "Urban Grill",
+          cuisine: "Barbecue",
+          location: "Central District, Kolkata",
+          rating: 4.4,
+          description: "Smoky grilled specialties and live music",
+          delivery_time: "30-40 mins",
+          cost_for_two: "₹1500-2000",
+          offers: "Free dessert with orders above ₹1000",
+          image_url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+        },
+        {
+          id: 'biryani-bliss',
+          name: "Biryani Bliss",
+          cuisine: "Mughlai",
+          location: "Park Circus, Kolkata",
+          rating: 4.6,
+          description: "Authentic biryani with royal flavors",
+          delivery_time: "25-35 mins",
+          cost_for_two: "₹800-1200",
+          offers: "10% off on all biryanis",
+          image_url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+        },
+        {
+          id: 'continental-delights',
+          name: "Continental Delights",
+          cuisine: "Continental",
+          location: "Park Street, Kolkata",
+          rating: 4.3,
+          description: "Classic European cuisine with modern twist",
+          delivery_time: "40-50 mins",
+          cost_for_two: "₹1800-2500",
+          offers: "Buy 1 get 1 free on pasta",
+          image_url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+        }
+      ];
+
+      let restaurantsHTML = '<h1 class="text-center mb-4 text-white">All Restaurants</h1><div class="row">';
+      
+      restaurants.forEach(restaurant => {
+        restaurantsHTML += `
+          <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card restaurant-card h-100">
+              <img src="${restaurant.image_url}" class="card-img-top" alt="${restaurant.name}" style="height: 200px; object-fit: cover;">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">${restaurant.name}</h5>
+                <p class="card-text flex-grow-1">${restaurant.description}</p>
+                <div class="mt-auto">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="rating-badge"><i class="fas fa-star"></i> ${restaurant.rating}</span>
+                    <span class="text-muted">${restaurant.delivery_time}</span>
+                  </div>
+                  <a href="restaurant-detail.html?id=${restaurant.id}" class="btn btn-primary w-100">View Menu</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      restaurantsHTML += '</div>';
+      document.getElementById('restaurant').innerHTML = restaurantsHTML;
+      
+      // Hide menu and reviews sections when showing all restaurants
+      document.getElementById('menu').style.display = 'none';
+      document.getElementById('reviews').style.display = 'none';
+      document.querySelector('h2').style.display = 'none';
+      document.querySelector('.card.shadow.p-4.mb-5').style.display = 'none';
+    }
+
+    function displayRestaurantDetails(data) {
+      const restaurant = data.restaurant;
+      
+      document.getElementById('restaurant').innerHTML = `
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1 class="display-5 fw-bold mb-3">${restaurant.name}</h1>
+            <p class="lead mb-3">${restaurant.description}</p>
+            <div class="d-flex flex-wrap gap-3 mb-3">
+              <span class="rating-badge">
+                <i class="fas fa-star me-1"></i> ${restaurant.rating || '4.0'}
+              </span>
+              <span class="bg-light text-dark px-3 py-2 rounded-pill">
+                <i class="fas fa-clock me-1"></i> ${restaurant.delivery_time}
+              </span>
+              <span class="bg-light text-dark px-3 py-2 rounded-pill">
+                <i class="fas fa-rupee-sign me-1"></i> ${restaurant.cost_for_two}
+              </span>
+              <span class="bg-warning text-dark px-3 py-2 rounded-pill">
+                <i class="fas fa-tag me-1"></i> ${restaurant.offers}
+              </span>
+            </div>
+            <p class="mb-0">
+              <i class="fas fa-map-marker-alt me-2"></i>
+              <strong>${restaurant.location}</strong>
+            </p>
+            <p class="mb-0">
+              <i class="fas fa-utensils me-2"></i>
+              <strong>Cuisine:</strong> ${restaurant.cuisine}
+            </p>
+          </div>
+          <div class="col-md-4 text-center">
+            <img src="${restaurant.image_url}" alt="${restaurant.name}" 
+                 class="img-fluid rounded-3 shadow" style="max-height: 250px; object-fit: cover;">
+          </div>
+        </div>
+      `;
+    }
+
+    function displayMenuItems(menuItems, restaurant) {
+      const menuContainer = document.getElementById('menu');
+      
+      if (!menuItems || menuItems.length === 0) {
+        menuContainer.innerHTML = `
+          <div class="col-12">
+            <div class="alert alert-info text-center">
+              <i class="fas fa-info-circle me-2"></i>
+              No menu items available at the moment.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Group menu items by category
+      const categories = {};
+      menuItems.forEach(item => {
+        if (!categories[item.category]) {
+          categories[item.category] = [];
+        }
+        categories[item.category].push(item);
+      });
+
+      let menuHTML = '';
+      
+      Object.keys(categories).forEach(category => {
+        menuHTML += `
+          <div class="col-12 category-section">
+            <h3 class="category-title">${category}</h3>
+            <div class="row">
+        `;
+        
+        categories[category].forEach(item => {
+          menuHTML += `
+            <div class="col-lg-6 mb-4">
+              <div class="card menu-card h-100">
+                <div class="row g-0 h-100">
+                  <div class="col-md-4">
+                    <img src="${item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'}" 
+                         alt="${item.name}" class="menu-image h-100 w-100">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body d-flex flex-column h-100">
+                      <div class="flex-grow-1">
+                        <h5 class="card-title fw-bold text-dark">${item.name}</h5>
+                        <p class="card-text text-muted">${item.description}</p>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <span class="menu-price">₹${item.price}</span>
+                        <button class="add-to-cart-btn" 
+                                onclick="addToCart({
+                                  id: '${item.id}',
+                                  name: '${item.name.replace(/'/g, "\\'")}', 
+                                  price: ${item.price}, 
+                                  image: '${item.image_url || ''}', 
+                                  restaurantId: '${item.restaurant_id}',
+                                  restaurantName: '${restaurant.name.replace(/'/g, "\\'")}',
+                                  category: '${item.category}'
+                                })">
+                          <i class="fas fa-plus me-1"></i> Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        menuHTML += `
+            </div>
+          </div>
+        `;
+      });
+
+      menuContainer.innerHTML = menuHTML;
+    }
+
+    function displayReviews(reviews) {
+      const reviewsContainer = document.getElementById('reviews');
+      
+      if (!reviews || reviews.length === 0) {
+        reviewsContainer.innerHTML = `
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            No reviews yet. Be the first to review!
+          </div>
+        `;
+        return;
+      }
+
+      let reviewsHTML = '';
+      
+      reviews.forEach(review => {
+        const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+        
+        reviewsHTML += `
+          <div class="card review-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h6 class="card-title mb-1 fw-bold">${review.username || 'Anonymous'}</h6>
+                  <div class="star-rating mb-2">${stars}</div>
+                </div>
+                <small class="text-muted">${new Date(review.date).toLocaleDateString()}</small>
+              </div>
+              <p class="card-text">${review.comment}</p>
+            </div>
+          </div>
+        `;
+      });
+
+      reviewsContainer.innerHTML = reviewsHTML;
+    }
+
+    function addToCart(item) {
+      const success = cartManager.addToCart(item);
+      if (success) {
+        cartManager.showNotification(`${item.name} added to cart!`, 'success');
+      }
+    }
+
+    // Review form submission
+    document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const restaurantId = urlParams.get('id');
+      const rating = document.getElementById('rating').value;
+      const comment = document.getElementById('comment').value;
+
+      // Validate rating
+      if (rating < 1 || rating > 5) {
+        cartManager.showNotification('Please enter a rating between 1 and 5', 'error');
+        return;
+      }
+
+      try {
+        // In a real app, you would send this to your backend
+        console.log('Review submitted:', { restaurantId, rating, comment });
+        
+        cartManager.showNotification('Review submitted successfully!', 'success');
+        document.getElementById('reviewForm').reset();
+        
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        cartManager.showNotification('Failed to submit review', 'error');
+      }
+    });
+
+    // Make cartManager globally available
+    window.cartManager = cartManager;
+    window.addToCart = addToCart;
+  </script>
+</body>
+</html>

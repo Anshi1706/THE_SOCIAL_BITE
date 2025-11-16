@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register - The Social Bite</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #ff6b35;
+      --secondary-color: #2c3e50;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .register-bg {
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                  url('https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zm9vZHxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      flex: 1;
+    }
+    
+    .navbar-brand {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+    }
+    
+    .form-card {
+      border-radius: 15px;
+      border: none;
+      max-width: 500px;
+      width: 100%;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      margin: 20px auto;
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+      transition: all 0.3s ease;
+      font-weight: 600;
+      padding: 12px;
+      font-size: 1.1rem;
+    }
+    
+    .btn-success:hover {
+      background-color: #218838;
+      border-color: #1e7e34;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    }
+    
+    .btn-success:disabled {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      transform: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    
+    .input-group-text {
+      background-color: #f8f9fa;
+      border-right: none;
+      color: #6c757d;
+    }
+    
+    .form-control {
+      border-left: none;
+      padding-left: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      box-shadow: none;
+      border-color: #ced4da;
+    }
+    
+    .input-group:focus-within {
+      box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+      border-radius: 0.375rem;
+    }
+    
+    .input-group:focus-within .input-group-text,
+    .input-group:focus-within .form-control {
+      border-color: var(--success-color);
+    }
+    
+    .text-success {
+      color: var(--success-color) !important;
+    }
+    
+    .custom-alert {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      z-index: 9999;
+      min-width: 300px;
+      max-width: 500px;
+      animation: slideIn 0.5s ease-out;
+      border-radius: 10px;
+      padding: 15px 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .loading {
+      position: relative;
+      pointer-events: none;
+    }
+    
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 0.375rem;
+    }
+    
+    .btn-loading {
+      position: relative;
+      color: transparent;
+    }
+    
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      margin-left: -10px;
+      margin-top: -10px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .password-toggle {
+      cursor: pointer;
+      background: #f8f9fa;
+      border: 1px solid #ced4da;
+      border-left: none;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      transition: background 0.3s ease;
+      border-radius: 0 0.375rem 0.375rem 0;
+    }
+    
+    .password-toggle:hover {
+      background: #e9ecef;
+    }
+    
+    .form-text {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+    
+    .strength-meter {
+      height: 5px;
+      margin-top: 5px;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      background-color: #e9ecef;
+    }
+    
+    .strength-weak {
+      background-color: #dc3545;
+      width: 25%;
+    }
+    
+    .strength-medium {
+      background-color: #ffc107;
+      width: 50%;
+    }
+    
+    .strength-strong {
+      background-color: #28a745;
+      width: 100%;
+    }
+    
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .feature-list li {
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+    }
+    
+    .feature-list li i {
+      color: var(--success-color);
+      margin-right: 12px;
+      font-size: 1.1rem;
+    }
+    
+    .form-check-input:checked {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+    }
+    
+    .nav-link {
+      color: #495057 !important;
+      font-weight: 500;
+    }
+    
+    .nav-link:hover {
+      color: var(--primary-color) !important;
+    }
+    
+    .demo-tip {
+      border-left: 4px solid var(--success-color);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .form-card {
+        margin: 10px;
+        padding: 20px !important;
+      }
+      
+      .container {
+        padding: 10px;
+      }
+      
+      .custom-alert {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .navbar-brand {
+        font-size: 1.1rem;
+      }
+      
+      .nav-link {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.5rem !important;
+      }
+      
+      .form-card {
+        margin: 5px;
+        padding: 15px !important;
+      }
+    }
+  </style>
+</head>
+<body class="register-bg">
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top" style="background-color: white;">
+    <div class="container">
+      <a href="index.html" class="navbar-brand fw-bold" style="color:#ff6b35;">
+        <i class="fas fa-utensils"></i> The Social Bite
+      </a>
+      <div class="navbar-nav ms-auto">
+        <span class="nav-link"><i class="fas fa-map-marker-alt text-primary"></i> Kolkata</span>
+        <a class="nav-link" href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container d-flex justify-content-center align-items-center flex-grow-1 py-4">
+    <div class="card shadow-lg p-4 form-card">
+      <div class="text-center mb-4">
+        <i class="fas fa-user-plus fa-3x text-success mb-3"></i>
+        <h2 class="fw-bold text-success">Create an Account</h2>
+        <p class="text-muted">Join us to explore delicious food options</p>
+      </div>
+      
+      <!-- Registration Form -->
+      <form id="registerForm">
+        <div class="mb-3">
+          <label for="fullName" class="form-label fw-semibold">Full Name</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+            <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Enter your full name" required minlength="3" />
+          </div>
+          <div class="form-text">Minimum 3 characters</div>
+        </div>
+        
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label fw-semibold">Phone Number</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+            <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your phone number" required />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="address" class="form-label fw-semibold">Delivery Address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+            <textarea id="address" name="address" class="form-control" placeholder="Enter your delivery address" rows="2" required></textarea>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="role" class="form-label fw-semibold">Account Type</label>
+          <select id="role" name="role" class="form-select" required>
+            <option value="customer">Customer</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div class="form-text">Select your account type</div>
+        </div>
+        
+        <div class="mb-3">
+          <label for="password" class="form-label fw-semibold">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Create a password" required minlength="6" />
+            <span class="password-toggle" id="passwordToggle">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+          <div class="form-text">Minimum 6 characters</div>
+          <div class="strength-meter" id="passwordStrength"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm your password" required minlength="6" />
+          </div>
+          <div class="form-text" id="passwordMatchText"></div>
+        </div>
+        
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="termsAgreement" required>
+          <label class="form-check-label" for="termsAgreement">
+            I agree to the <a href="#" class="text-success">Terms of Service</a> and <a href="#" class="text-success">Privacy Policy</a>
+          </label>
+        </div>
+        
+        <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
+          <span class="btn-text">
+            <i class="fas fa-user-plus me-2"></i>Create Account
+          </span>
+        </button>
+        
+        <p class="text-center mt-3 mb-0">
+          Already have an account? <a href="login.html" class="text-success fw-semibold">Login here</a>
+        </p>
+      </form>
+
+      <!-- Benefits Section -->
+      <div class="mt-4 pt-3 border-top">
+        <h6 class="fw-semibold text-center mb-3">Why join The Social Bite?</h6>
+        <ul class="feature-list">
+          <li><i class="fas fa-check-circle"></i> Fast food delivery</li>
+          <li><i class="fas fa-check-circle"></i> Exclusive deals and discounts</li>
+          <li><i class="fas fa-check-circle"></i> Track your orders in real-time</li>
+          <li><i class="fas fa-check-circle"></i> Save your favorite restaurants</li>
+        </ul>
+      </div>
+
+      <!-- Demo Tip -->
+      <div class="card mt-4 demo-tip">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-lightbulb text-success me-3"></i>
+            <div>
+              <small class="fw-semibold">Demo Tip:</small>
+              <small class="text-muted"> Try creating both <strong>Customer</strong> and <strong>Admin</strong> accounts to explore different features!</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Check if user is already logged in
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      
+      if (isLoggedIn && currentUser) {
+        // User is already logged in, redirect to main page
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 500);
+        return;
+      }
+
+      // Auto-fill demo credentials for easier testing
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === 'admin') {
+        document.getElementById('fullName').value = 'Administrator';
+        document.getElementById('email').value = 'admin@thesocialbite.com';
+        document.getElementById('phone').value = '+91 98765 43210';
+        document.getElementById('address').value = 'The Social Bite HQ, Kolkata';
+        document.getElementById('password').value = 'admin123';
+        document.getElementById('confirmPassword').value = 'admin123';
+        document.getElementById('role').value = 'admin';
+        document.getElementById('termsAgreement').checked = true;
+      } else if (urlParams.get('demo') === 'customer') {
+        document.getElementById('fullName').value = 'Demo Customer';
+        document.getElementById('email').value = 'customer@example.com';
+        document.getElementById('phone').value = '+91 98765 43210';
+        document.getElementById('address').value = '123 Park Street, Kolkata';
+        document.getElementById('password').value = 'customer123';
+        document.getElementById('confirmPassword').value = 'customer123';
+        document.getElementById('role').value = 'customer';
+        document.getElementById('termsAgreement').checked = true;
+      }
+    });
+
+    // Password toggle functionality
+    document.getElementById('passwordToggle').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const confirmPasswordInput = document.getElementById('confirmPassword');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        confirmPasswordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        confirmPasswordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+
+    // Password strength indicator
+    document.getElementById('password').addEventListener('input', function() {
+      const password = this.value;
+      const strengthMeter = document.getElementById('passwordStrength');
+      
+      // Reset strength meter
+      strengthMeter.className = 'strength-meter';
+      
+      if (password.length === 0) {
+        return;
+      }
+      
+      let strength = 0;
+      
+      // Length check
+      if (password.length >= 6) strength++;
+      if (password.length >= 8) strength++;
+      
+      // Character variety checks
+      if (/[a-z]/.test(password)) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^a-zA-Z0-9]/.test(password)) strength++;
+      
+      // Update strength meter
+      if (strength <= 2) {
+        strengthMeter.className = 'strength-meter strength-weak';
+      } else if (strength <= 4) {
+        strengthMeter.className = 'strength-meter strength-medium';
+      } else {
+        strengthMeter.className = 'strength-meter strength-strong';
+      }
+    });
+
+    // Password confirmation check
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = this.value;
+      const matchText = document.getElementById('passwordMatchText');
+      
+      if (confirmPassword.length === 0) {
+        matchText.textContent = '';
+        matchText.className = 'form-text';
+        return;
+      }
+      
+      if (password === confirmPassword) {
+        matchText.textContent = '✓ Passwords match!';
+        matchText.className = 'form-text text-success fw-semibold';
+      } else {
+        matchText.textContent = '✗ Passwords do not match';
+        matchText.className = 'form-text text-danger';
+      }
+    });
+    
+    // Enhanced registration handler
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const confirmPassword = document.getElementById('confirmPassword').value.trim();
+      const role = document.getElementById('role').value;
+      const termsAgreed = document.getElementById('termsAgreement').checked;
+      
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const btnText = submitBtn.querySelector('.btn-text');
+      
+      // Show loading state
+      submitBtn.classList.add('btn-loading');
+      submitBtn.disabled = true;
+      
+      // Enhanced validation
+      if (!fullName || !email || !phone || !address || !password || !confirmPassword) {
+        showNotification('Please fill in all fields', 'error');
+        resetFormState();
+        return;
+      }
+
+      if (fullName.length < 3) {
+        showNotification('Full name must be at least 3 characters', 'error');
+        resetFormState();
+        return;
+      }
+      
+      if (password.length < 6) {
+        showNotification('Password must be at least 6 characters', 'error');
+        resetFormState();
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showNotification('Passwords do not match', 'error');
+        resetFormState();
+        return;
+      }
+
+      if (!termsAgreed) {
+        showNotification('Please agree to the Terms of Service and Privacy Policy', 'error');
+        resetFormState();
+        return;
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showNotification('Please enter a valid email address', 'error');
+        resetFormState();
+        return;
+      }
+
+      // Phone validation (basic)
+      const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+      if (!phoneRegex.test(phone.replace(/[-()\s]/g, ''))) {
+        showNotification('Please enter a valid phone number', 'error');
+        resetFormState();
+        return;
+      }
+      
+      try {
+        const result = await handleRegistration(fullName, email, phone, address, password, role);
+        
+        if (result.success) {
+    showNotification('Account created successfully! Redirecting...', 'success');
+    
+    // Wait a moment then redirect
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 1500);
+} else {
+          showNotification(result.error || 'Registration failed. Please try again.', 'error');
+          resetFormState();
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        showNotification('An error occurred during registration. Please try again.', 'error');
+        resetFormState();
+      }
+      
+      function resetFormState() {
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.disabled = false;
+      }
+    });
+    
+    // Main registration function that matches main app structure
+    async function handleRegistration(fullName, email, phone, address, password, role) {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Check if user already exists
+      let users = [];
+      let adminUsers = [];
+      
+      try {
+        users = JSON.parse(localStorage.getItem('users') || '[]');
+        adminUsers = JSON.parse(localStorage.getItem('adminUsers') || '[]');
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        users = [];
+        adminUsers = [];
+      }
+      
+      // Check for existing user
+      const existingUser = users.find(user => user.email === email);
+      const existingAdmin = adminUsers.find(user => user.email === email);
+      
+      if (existingUser || existingAdmin) {
+        return { 
+          success: false, 
+          error: 'User already exists with this email address' 
+        };
+      }
+      
+      // Create user data matching main app structure
+      const userData = {
+        id: Date.now(),
+        name: fullName,
+        email: email,
+        password: password,
+        phone: phone,
+        address: address,
+        role: role,
+        joinDate: new Date().toISOString()
+      };
+      
+      if (role === 'admin') {
+        // Add to admin users
+        adminUsers.push(userData);
+        localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
+        
+        // Set as current user (admin)
+        const { password: _, ...userWithoutPassword } = userData;
+        localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+        localStorage.setItem('adminUser', JSON.stringify(userWithoutPassword));
+        localStorage.setItem('isAdmin', 'true');
+      } else {
+        // Add to regular users
+        users.push(userData);
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        // Set as current user (customer)
+        const { password: _, ...userWithoutPassword } = userData;
+        localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+        localStorage.removeItem('adminUser');
+        localStorage.removeItem('isAdmin');
+      }
+      
+      // Set login status
+      localStorage.setItem('isLoggedIn', 'true');
+      
+      return { success: true };
+    }
+    
+    // Simple notification function
+    function showNotification(message, type = 'info') {
+      // Remove existing notifications
+      const existingAlert = document.querySelector('.custom-alert');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+      
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `custom-alert alert-${type}`;
+      alertDiv.style.cssText = `
+        background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
+        color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
+        border-left: 4px solid ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        display: flex;
+        align-items: center;
+      `;
+      
+      const icon = type === 'success' ? 'check-circle' : 
+                  type === 'error' ? 'exclamation-circle' : 'info-circle';
+      
+      alertDiv.innerHTML = `
+        <i class="fas fa-${icon} me-2"></i>
+        <span class="flex-grow-1">${message}</span>
+        <button type="button" class="btn-close ms-2" onclick="this.parentElement.remove()" style="border: none; background: none; font-size: 1.2rem; cursor: pointer;">×</button>
+      `;
+      
+      document.body.appendChild(alertDiv);
+      
+      // Auto remove after 5 seconds
+      setTimeout(() => {
+        if (alertDiv.parentElement) {
+          alertDiv.remove();
+        }
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
