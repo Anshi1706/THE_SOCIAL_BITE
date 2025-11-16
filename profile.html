@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - The Social Bite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow: #FFD93D;
+            --orange: #FF6B6B;
+            --pink: #FF8DC7;
+            --purple: #9B5DE5;
+            --blue: #00BBF9;
+            --green: #06D6A0;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar-brand {
+            color: var(--purple) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #333 !important;
+            font-weight: 600;
+        }
+        
+        .nav-link.active {
+            color: var(--purple) !important;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            color: white;
+            padding: 3rem 0;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--purple);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-label {
+            color: #6c757d;
+            font-weight: 600;
+        }
+        
+        .order-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .order-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .badge-status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .btn-edit {
+            background: var(--green);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit:hover {
+            background: #05b389;
+            transform: scale(1.05);
+        }
+        
+        .tab-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--purple);
+            border-bottom: 3px solid var(--purple);
+            background: transparent;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .form-control:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 0.2rem rgba(155, 93, 229, 0.25);
+        }
+        
+        .custom-alert {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 500px;
+            animation: slideIn 0.5s ease-out;
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .address-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .address-card:hover {
+            border-color: var(--purple);
+            box-shadow: 0 5px 15px rgba(155, 93, 229, 0.1);
+        }
+        
+        .address-card.default {
+            border-color: var(--green);
+            background: rgba(6, 214, 160, 0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                padding: 2rem 0;
+            }
+            
+            .profile-header .display-5 {
+                font-size: 2rem;
+            }
+            
+            .stats-number {
+                font-size: 2rem;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-utensils"></i> The Social Bite
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" id="mainNavigation">
+                    <!-- Navigation will be dynamically updated -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold mb-3">My Profile</h1>
+                    <p class="lead mb-0">Manage your account and track your orders</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="Profile" class="profile-avatar shadow" id="profileAvatar">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-4 mb-4">
+                <div class="profile-card">
+                    <div class="card-body text-center p-4">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             alt="Profile" class="profile-avatar mb-3" id="sidebarAvatar">
+                        <h3 id="profileUsername" class="fw-bold mb-2">Loading...</h3>
+                        <p class="text-muted mb-3" id="profileEmail">Loading...</p>
+                        <span class="badge bg-success mb-3" id="profileRole">Customer</span>
+                        <div class="d-grid">
+                            <button class="btn btn-edit" onclick="toggleEditMode()">
+                                <i class="fas fa-edit me-2"></i>Edit Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stats-card">
+                            <div class="stats-number" id="totalOrders">0</div>
+                            <div class="stats-label">Total Orders</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stats-card">
+                            <div class="stats-number" id="totalSpent">₹0</div>
+                            <div class="stats-label">Total Spent</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stats-card">
+                            <div class="stats-number" id="deliveredOrders">0</div>
+                            <div class="stats-label">Delivered</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stats-card">
+                            <div class="stats-number" id="pendingOrders">0</div>
+                            <div class="stats-label">Pending</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+                            <i class="fas fa-user me-2"></i>Profile Info
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">
+                            <i class="fas fa-shopping-bag me-2"></i>Order History
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="address-tab" data-bs-toggle="tab" data-bs-target="#address" type="button" role="tab">
+                            <i class="fas fa-map-marker-alt me-2"></i>Addresses
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="profileTabsContent">
+                    <!-- Profile Info Tab -->
+                    <div class="tab-pane fade show active" id="profile" role="tabpanel">
+                        <form id="profileForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="editName" class="form-label fw-semibold">Full Name</label>
+                                    <input type="text" class="form-control" id="editName" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="editUsername" class="form-label fw-semibold">Username</label>
+                                    <input type="text" class="form-control" id="editUsername" readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="editEmail" class="form-label fw-semibold">Email</label>
+                                    <input type="email" class="form-control" id="editEmail" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="editPhone" class="form-label fw-semibold">Phone Number</label>
+                                    <input type="tel" class="form-control" id="editPhone" placeholder="Add phone number" readonly>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editAddress" class="form-label fw-semibold">Address</label>
+                                <textarea class="form-control" id="editAddress" rows="3" placeholder="Enter your address..." readonly></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editBio" class="form-label fw-semibold">Bio</label>
+                                <textarea class="form-control" id="editBio" rows="3" placeholder="Tell us about yourself..." readonly></textarea>
+                            </div>
+                            <div class="d-none" id="editActions">
+                                <button type="button" class="btn btn-success me-2" onclick="saveProfile()">
+                                    <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="cancelEdit()">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Order History Tab -->
+                    <div class="tab-pane fade" id="orders" role="tabpanel">
+                        <div id="ordersList">
+                            <div class="text-center py-5">
+                                <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No orders yet</h5>
+                                <p class="text-muted">Your order history will appear here</p>
+                                <a href="restaurants.html" class="btn btn-primary">
+                                    <i class="fas fa-utensils me-2"></i>Order Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Addresses Tab -->
+                    <div class="tab-pane fade" id="address" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Saved Addresses</h5>
+                            <button class="btn btn-primary" onclick="addNewAddress()">
+                                <i class="fas fa-plus me-2"></i>Add New Address
+                            </button>
+                        </div>
+                        <div id="addressesList">
+                            <!-- Addresses will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Address Modal -->
+    <div class="modal fade" id="addressModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addressForm">
+                        <div class="mb-3">
+                            <label class="form-label">Address Type</label>
+                            <select class="form-select" id="addressType">
+                                <option value="home">Home</option>
+                                <option value="work">Work</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Full Address</label>
+                            <textarea class="form-control" id="addressText" rows="3" placeholder="Enter your complete address"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Landmark</label>
+                            <input type="text" class="form-control" id="addressLandmark" placeholder="Nearby landmark">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" id="addressCity" value="Kolkata" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Pincode</label>
+                                <input type="text" class="form-control" id="addressPincode" placeholder="Enter pincode">
+                            </div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="setAsDefault">
+                            <label class="form-check-label" for="setAsDefault">
+                                Set as default address
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAddress()">Save Address</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple auth simulation
+        const auth = {
+            isLoggedIn() {
+                const user = localStorage.getItem('currentUser');
+                return user !== null;
+            },
+
+            getCurrentUser() {
+                const user = localStorage.getItem('currentUser');
+                return user ? JSON.parse(user) : null;
+            },
+
+            showNotification(message, type = 'info') {
+                // Remove existing notifications
+                const existingAlert = document.querySelector('.custom-alert');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `custom-alert alert-${type}`;
+                
+                const icon = type === 'success' ? 'check-circle' : 
+                            type === 'error' ? 'exclamation-circle' : 
+                            type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+                
+                alertDiv.innerHTML = `
+                    <i class="fas fa-${icon} me-2"></i>
+                    <span class="flex-grow-1">${message}</span>
+                    <button type="button" class="btn-close ms-2" onclick="this.parentElement.remove()" style="border: none; background: none; font-size: 1.2rem; cursor: pointer;">×</button>
+                `;
+
+                document.body.appendChild(alertDiv);
+
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentElement) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            },
+
+            updateNavigation() {
+                const navContainer = document.getElementById('mainNavigation');
+                if (!navContainer) return;
+                
+                const isLoggedIn = this.isLoggedIn();
+                const currentUser = this.getCurrentUser();
+                const userName = currentUser ? currentUser.name : '';
+                
+                navContainer.innerHTML = `
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="restaurants.html">
+                            <i class="fas fa-store me-1"></i> Restaurants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i> Cart
+                            <span id="cartCount" class="badge bg-warning rounded-pill ms-1" style="display: none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html">
+                            <i class="fas fa-user me-1"></i> Profile
+                        </a>
+                    </li>
+                    ${isLoggedIn ? `
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="auth.logout()">
+                                <i class="fas fa-sign-out-alt me-1"></i> Logout
+                            </a>
+                        </li>
+                    ` : `
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.html">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login
+                            </a>
+                        </li>
+                    `}
+                `;
+            },
+
+            logout() {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        };
+
+        let isEditMode = false;
+        let originalData = {};
+
+        // Load profile data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication first
+            if (!auth.isLoggedIn()) {
+                auth.showNotification('Please login to view your profile', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
+            auth.updateNavigation();
+            loadProfileData();
+            loadOrderHistory();
+            loadAddresses();
+            updateStats();
+        });
+
+        function loadProfileData() {
+            const currentUser = auth.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Set profile data
+            document.getElementById('profileUsername').textContent = currentUser.name || currentUser.username || 'User';
+            document.getElementById('profileEmail').textContent = currentUser.email || 'No email';
+            document.getElementById('profileRole').textContent = (currentUser.role || 'customer').charAt(0).toUpperCase() + (currentUser.role || 'customer').slice(1);
+            
+            // Set form data
+            document.getElementById('editName').value = currentUser.name || currentUser.username || '';
+            document.getElementById('editUsername').value = currentUser.username || '';
+            document.getElementById('editEmail').value = currentUser.email || '';
+            document.getElementById('editPhone').value = currentUser.phone || '';
+            document.getElementById('editAddress').value = currentUser.address || '';
+            document.getElementById('editBio').value = currentUser.bio || '';
+
+            // Store original data
+            originalData = {
+                name: currentUser.name || currentUser.username || '',
+                username: currentUser.username || '',
+                email: currentUser.email || '',
+                phone: currentUser.phone || '',
+                address: currentUser.address || '',
+                bio: currentUser.bio || ''
+            };
+        }
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const form = document.getElementById('profileForm');
+            const inputs = form.querySelectorAll('input, textarea');
+            const editActions = document.getElementById('editActions');
+
+            inputs.forEach(input => {
+                input.readOnly = !isEditMode;
+            });
+
+            if (isEditMode) {
+                editActions.classList.remove('d-none');
+                auth.showNotification('You can now edit your profile', 'info');
+            } else {
+                editActions.classList.add('d-none');
+                // Restore original data
+                document.getElementById('editName').value = originalData.name;
+                document.getElementById('editUsername').value = originalData.username;
+                document.getElementById('editEmail').value = originalData.email;
+                document.getElementById('editPhone').value = originalData.phone;
+                document.getElementById('editAddress').value = originalData.address;
+                document.getElementById('editBio').value = originalData.bio;
+            }
+        }
+
+        function saveProfile() {
+            const currentUser = auth.getCurrentUser();
+            if (!currentUser) return;
+
+            const updatedData = {
+                name: document.getElementById('editName').value,
+                username: document.getElementById('editUsername').value,
+                email: document.getElementById('editEmail').value,
+                phone: document.getElementById('editPhone').value,
+                address: document.getElementById('editAddress').value,
+                bio: document.getElementById('editBio').value
+            };
+
+            // Validate required fields
+            if (!updatedData.name.trim()) {
+                auth.showNotification('Name is required', 'error');
+                return;
+            }
+
+            if (!updatedData.email.trim()) {
+                auth.showNotification('Email is required', 'error');
+                return;
+            }
+
+            // Update user data in localStorage
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            
+            if (userIndex !== -1) {
+                users[userIndex] = { ...users[userIndex], ...updatedData };
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            // Update current user
+            const updatedUser = { ...currentUser, ...updatedData };
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+            
+            // Update navigation
+            auth.updateNavigation();
+            
+            // Update profile display
+            loadProfileData();
+            
+            // Exit edit mode
+            isEditMode = false;
+            document.getElementById('editActions').classList.add('d-none');
+            
+            auth.showNotification('Profile updated successfully!', 'success');
+        }
+
+        function cancelEdit() {
+            toggleEditMode();
+            auth.showNotification('Changes discarded', 'info');
+        }
+
+        function loadOrderHistory() {
+            const orders = JSON.parse(localStorage.getItem('orderHistory')) || [];
+            const ordersList = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                return; // Keep the default "no orders" message
+            }
+
+            let ordersHTML = '';
+            orders.forEach(order => {
+                const orderDate = new Date(order.date || order.createdAt || Date.now());
+                const formattedDate = orderDate.toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                ordersHTML += `
+                    <div class="card order-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="fw-bold mb-1">Order #${order.id || order.orderId || 'N/A'}</h6>
+                                    <p class="text-muted mb-1">${order.restaurantName || order.restaurant || 'Unknown Restaurant'}</p>
+                                </div>
+                                <span class="badge badge-status ${getStatusClass(order.status)}">${formatStatus(order.status)}</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">Items: ${order.items ? order.items.length : 0}</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted">Total: ₹${(order.total || order.amount || 0).toFixed(2)}</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted">${formattedDate}</small>
+                                </div>
+                            </div>
+                            ${order.deliveryAddress ? `
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        ${order.deliveryAddress}
+                                    </small>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            ordersList.innerHTML = ordersHTML;
+        }
+
+        function formatStatus(status) {
+            const statusMap = {
+                'confirmed': 'Confirmed',
+                'preparing': 'Preparing',
+                'out_for_delivery': 'On the Way',
+                'delivered': 'Delivered',
+                'cancelled': 'Cancelled',
+                'pending': 'Pending',
+                'completed': 'Completed'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'delivered':
+                case 'completed': 
+                    return 'bg-success';
+                case 'confirmed':
+                case 'preparing':
+                case 'pending': 
+                    return 'bg-warning';
+                case 'cancelled': 
+                    return 'bg-danger';
+                case 'out_for_delivery': 
+                    return 'bg-info';
+                default: 
+                    return 'bg-secondary';
+            }
+        }
+
+        function updateStats() {
+            const orders = JSON.parse(localStorage.getItem('orderHistory')) || [];
+            const totalOrders = orders.length;
+            const totalSpent = orders.reduce((sum, order) => sum + (order.total || order.amount || 0), 0);
+            const deliveredOrders = orders.filter(order => order.status === 'delivered' || order.status === 'completed').length;
+            const pendingOrders = orders.filter(order => 
+                order.status === 'confirmed' || order.status === 'preparing' || order.status === 'pending' || order.status === 'out_for_delivery'
+            ).length;
+            
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('totalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
+            document.getElementById('deliveredOrders').textContent = deliveredOrders;
+            document.getElementById('pendingOrders').textContent = pendingOrders;
+        }
+
+        function loadAddresses() {
+            const currentUser = auth.getCurrentUser();
+            if (!currentUser) return;
+
+            const addresses = currentUser.addresses || [
+                {
+                    id: 1,
+                    type: 'home',
+                    address: '123 Park Street, Kolkata',
+                    landmark: 'Near Park Street Metro',
+                    city: 'Kolkata',
+                    pincode: '700016',
+                    isDefault: true
+                }
+            ];
+
+            const addressesList = document.getElementById('addressesList');
+            
+            if (addresses.length === 0) {
+                addressesList.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-map-marker-alt fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">No addresses saved yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let addressesHTML = '';
+            addresses.forEach(address => {
+                addressesHTML += `
+                    <div class="address-card ${address.isDefault ? 'default' : ''}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-2">
+                                    <h6 class="fw-bold mb-0 me-2 text-capitalize">${address.type}</h6>
+                                    ${address.isDefault ? '<span class="badge bg-success">Default</span>' : ''}
+                                </div>
+                                <p class="mb-1">${address.address}</p>
+                                ${address.landmark ? `<p class="mb-1 text-muted"><small>Landmark: ${address.landmark}</small></p>` : ''}
+                                <p class="mb-1 text-muted"><small>${address.city} - ${address.pincode}</small></p>
+                            </div>
+                            <div class="btn-group ms-3">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editAddress(${address.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                ${!address.isDefault ? `
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteAddress(${address.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            addressesList.innerHTML = addressesHTML;
+        }
+
+        function addNewAddress() {
+            const modal = new bootstrap.Modal(document.getElementById('addressModal'));
+            document.getElementById('addressForm').reset();
+            modal.show();
+        }
+
+        function saveAddress() {
+            const currentUser = auth.getCurrentUser();
+            if (!currentUser) return;
+
+            const addressData = {
+                id: Date.now(),
+                type: document.getElementById('addressType').value,
+                address: document.getElementById('addressText').value,
+                landmark: document.getElementById('addressLandmark').value,
+                city: document.getElementById('addressCity').value,
+                pincode: document.getElementById('addressPincode').value,
+                isDefault: document.getElementById('setAsDefault').checked
+            };
+
+            // Validate address
+            if (!addressData.address.trim()) {
+                auth.showNotification('Please enter address', 'error');
+                return;
+            }
+
+            if (!addressData.pincode.trim() || addressData.pincode.length !== 6) {
+                auth.showNotification('Please enter valid 6-digit pincode', 'error');
+                return;
+            }
+
+            // Update user addresses
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            
+            if (userIndex !== -1) {
+                if (!users[userIndex].addresses) {
+                    users[userIndex].addresses = [];
+                }
+
+                // If setting as default, remove default from other addresses
+                if (addressData.isDefault) {
+                    users[userIndex].addresses.forEach(addr => {
+                        addr.isDefault = false;
+                    });
+                }
+
+                users[userIndex].addresses.push(addressData);
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Update current user
+                const updatedUser = { ...currentUser, addresses: users[userIndex].addresses };
+                localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                
+                // Reload addresses
+                loadAddresses();
+                
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('addressModal')).hide();
+                
+                auth.showNotification('Address added successfully!', 'success');
+            }
+        }
+
+        function editAddress(addressId) {
+            auth.showNotification('Edit address feature coming soon!', 'info');
+        }
+
+        function deleteAddress(addressId) {
+            if (confirm('Are you sure you want to delete this address?')) {
+                const currentUser = auth.getCurrentUser();
+                if (!currentUser || !currentUser.addresses) return;
+
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                
+                if (userIndex !== -1) {
+                    users[userIndex].addresses = users[userIndex].addresses.filter(addr => addr.id !== addressId);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    
+                    // Update current user
+                    const updatedUser = { ...currentUser, addresses: users[userIndex].addresses };
+                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                    
+                    // Reload addresses
+                    loadAddresses();
+                    
+                    auth.showNotification('Address deleted successfully!', 'success');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
